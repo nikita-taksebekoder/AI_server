@@ -1,0 +1,84 @@
+{
+  "port": 3270,
+  "title": "AI Router 1 - Orchestrator",
+  "openRouterKeyFile": "C:\\Users\\Forestsnow\\workspace\\AI_server\\openrouter.txt",
+  "host": "127.0.0.1",
+  "requestTimeoutMs": 90000,
+  "maxFallbackAttempts": 4,
+  "maxConcurrentRequests": 2,
+  "queuePolicy": "fifo",
+  "logLevel": "info",
+  "rateLimitWindowMs": 60000,
+  "maxRequestsPerWindow": 5,
+  "rateLimitCooldownMs": 120000,
+  "authCooldownMs": 3600000,
+  "badRequestCooldownMs": 3600000,
+  "providerErrorCooldownMs": 60000,
+  "timeoutCooldownMs": 60000,
+  "emptyResponseCooldownMs": 30000,
+  "preferLastSuccessful": true,
+  "disableRoleSwitch": true,
+  "fallbackOnRateLimit": true,
+  "minDelayBetweenUpstreamRequestsMs": 2000,
+  "responseCacheTtlMs": 30000,
+  "responseCacheMaxEntries": 50,
+  "minRequestIntervalMs": 5000,
+  "roleRetryCooldownMs": 30000,
+  "maxCompletionTokens": 4096,
+  "maxEstimatedPromptTokens": 90000,
+  "openRouterApiKeyEnv": "OPENROUTER_API_KEY_ROUTER1",
+  "virtualModels": {
+    "Orchestrator": {
+      "contextLength": 1000000,
+      "models": [
+        {
+          "provider": "openrouter",
+          "model": "openrouter/owl-alpha"
+        },
+        {
+          "provider": "openrouter",
+          "model": "nvidia/nemotron-3-super-120b-a12b:free"
+        },
+        {
+          "provider": "openrouter",
+          "model": "nousresearch/hermes-3-llama-3.1-405b:free",
+          "supportsTools": false
+        }
+      ]
+    },
+    "Reviewer": [
+      {
+        "provider": "openrouter",
+        "model": "openrouter/owl-alpha"
+      },
+      {
+        "provider": "openrouter",
+        "model": "openai/gpt-oss-120b:free"
+      },
+      {
+        "provider": "openrouter",
+        "model": "nvidia/nemotron-3-super-120b-a12b:free"
+      },
+      {
+        "provider": "openrouter",
+        "model": "nousresearch/hermes-3-llama-3.1-405b:free",
+        "supportsTools": false
+      }
+    ],
+    "Router Senior": [
+      {
+        "provider": "openrouter",
+        "model": "openrouter/owl-alpha"
+      },
+      {
+        "provider": "openrouter",
+        "model": "nvidia/nemotron-3-super-120b-a12b:free"
+      },
+      {
+        "provider": "openrouter",
+        "model": "nousresearch/hermes-3-llama-3.1-405b:free",
+        "supportsTools": false
+      }
+    ]
+  }
+}

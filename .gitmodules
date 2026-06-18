@@ -1,0 +1,9 @@
+[submodule "DEEPSEEK"]
+	path = DEEPSEEK
+	url = https://github.com/ForgetMeAI/FreeDeepseekAPI.git
+[submodule "KIMI"]
+	path = KIMI
+	url = https://github.com/ForgetMeAI/KIMI.git
+[submodule "QWEN"]
+	path = QWEN
+	url = https://github.com/ForgetMeAI/FreeQwenApi.git

@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Router 3270 — Role Monitor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #06080e;
+      --neon-blue: #00d4ff;
+      --neon-blue-dim: rgba(0, 212, 255, 0.15);
+      --neon-green: #00ff88;
+      --neon-green-dim: rgba(0, 255, 136, 0.15);
+      --neon-red: #ff3366;
+      --neon-red-dim: rgba(255, 51, 102, 0.15);
+      --neon-purple: #a855f7;
+      --neon-purple-dim: rgba(168, 85, 247, 0.15);
+      --neon-cyan: #22d3ee;
+      --neon-cyan-dim: rgba(34, 211, 238, 0.15);
+      --neon-orange: #ff8c00;
+      --neon-yellow: #fbbf24;
+      --text-primary: #f0f4ff;
+      --text-secondary: #8892a4;
+      --text-muted: #4a5568;
+      --glass-bg: rgba(15, 23, 42, 0.5);
+      --glass-border: rgba(148, 163, 184, 0.08);
+      --glass-blur: blur(24px);
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+      --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 24px;
+      position: relative;
+    }
+
+    /* Background */
+    .bg-effects {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+    }
+    .bg-effects::before {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%; width: 200%; height: 200%;
+      background:
+        radial-gradient(ellipse 600px 600px at 20% 20%, rgba(0, 212, 255, 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 500px 500px at 80% 80%, rgba(0, 255, 136, 0.05) 0%, transparent 60%);
+      animation: bgDrift 30s ease-in-out infinite alternate;
+    }
+    @keyframes bgDrift {
+      0% { transform: translate(0, 0); }
+      50% { transform: translate(2%, -2%); }
+      100% { transform: translate(-1%, 1%); }
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header */
+    .page-header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    .page-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff 0%, var(--neon-blue) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 6px;
+    }
+    .page-header .subtitle {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    /* Overview Bar */
+    .overview-bar {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+    .overview-item {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 14px 24px;
+      text-align: center;
+      min-width: 120px;
+    }
+    .overview-item .num {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--neon-blue);
+      font-family: 'JetBrains Mono', monospace;
+      text-shadow: 0 0 16px rgba(0, 212, 255, 0.3);
+    }
+    .overview-item .lbl {
+      font-size: 0.625rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 4px;
+    }
+
+    /* Grid */
+    .grid {
+      display: grid;
+      gap: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    }
+
+    /* Card */
+    .card {
+      background: rgba(12, 18, 30, 0.65);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      transition: all var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--neon-blue), transparent);
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+    .card:hover {
+      border-color: rgba(0, 212, 255, 0.2);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 212, 255, 0.05);
+      transform: translateY(-2px);
+    }
+    .card:hover::before { opacity: 0.5; }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .card-header h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .role-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .icon-orchestrator { background: var(--neon-blue-dim); border: 1px solid rgba(0, 212, 255, 0.2); }
+    .icon-reviewer { background: var(--neon-purple-dim); border: 1px solid rgba(168, 85, 247, 0.2); }
+    .icon-senior { background: var(--neon-cyan-dim); border: 1px solid rgba(34, 211, 238, 0.2); }
+
+    .badge {
+      font-size: 0.6875rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .badge-active {
+      background: rgba(0, 255, 136, 0.08);
+      border: 1px solid rgba(0, 255, 136, 0.2);
+      color: var(--neon-green);
+    }
+    .badge-active::before {
+      content: '● ';
+      text-shadow: 0 0 8px var(--neon-green);
+    }
+    .badge-idle {
+      background: rgba(148, 163, 184, 0.06);
+      border: 1px solid rgba(148, 163, 184, 0.12);
+      color: var(--text-muted);
+    }
+    .badge-processing {
+      background: rgba(255, 140, 0, 0.08);
+      border: 1px solid rgba(255, 140, 0, 0.2);
+      color: var(--neon-orange);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    /* Provider List */
+    .provider-list { list-style: none; }
+    .provider-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      margin: 4px 0;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid transparent;
+      transition: all var(--transition);
+    }
+    .provider-list li:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+    .provider-list li.active {
+      background: rgba(0, 212, 255, 0.08);
+      border-color: rgba(0, 212, 255, 0.2);
+      box-shadow: 0 0 16px rgba(0, 212, 255, 0.06);
+    }
+    .provider-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+    }
+    .provider-list li.active .provider-name {
+      color: var(--neon-blue);
+      font-weight: 600;
+      text-shadow: 0 0 8px rgba(0, 212, 255, 0.3);
+    }
+    .active-label {
+      font-size: 0.625rem;
+      color: var(--neon-green);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      text-shadow: 0 0 8px rgba(0, 255, 136, 0.3);
+    }
+
+    /* Stats */
+    .stats {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--glass-border);
+    }
+    .stats-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-size: 0.8125rem;
+    }
+    .stats-label { color: var(--text-muted); }
+    .stats-value {
+      color: var(--text-primary);
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .stats-value.highlight {
+      color: var(--neon-blue);
+      text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+    }
+
+    /* Refresh Button */
+    .refresh-btn {
+      display: block;
+      margin: 32px auto 0;
+      padding: 12px 32px;
+      background: var(--neon-blue-dim);
+      border: 1px solid rgba(0, 212, 255, 0.25);
+      color: var(--neon-blue);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      transition: all var(--transition);
+    }
+    .refresh-btn:hover {
+      background: rgba(0, 212, 255, 0.2);
+      border-color: var(--neon-blue);
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.15);
+      transform: translateY(-1px);
+    }
+
+    .last-update {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.6875rem;
+      margin-top: 16px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .error-msg {
+      text-align: center;
+      color: var(--neon-red);
+      padding: 40px;
+      font-size: 1.1rem;
+    }
+
+    /* Back link */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      text-decoration: none;
+      margin-bottom: 1.5rem;
+      transition: color var(--transition);
+    }
+    .back-link:hover { color: var(--neon-blue); }
+
+    @media (max-width: 768px) {
+      .grid { grid-template-columns: 1fr; }
+      .overview-bar { gap: 8px; }
+      .overview-item { min-width: 80px; padding: 10px 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-effects"></div>
+
+  <div class="container">
+    <a href="/" class="back-link">← Back to Dashboard</a>
+
+    <div class="page-header">
+      <h1>🧭 AI Router 3270 — Role Monitor</h1>
+      <p class="subtitle">Real-time role, provider & token traffic monitoring</p>
+    </div>
+
+    <div class="overview-bar" id="overview"></div>
+
+    <div class="grid" id="cards"></div>
+
+    <button class="refresh-btn" onclick="render()">🔄 Refresh</button>
+    <p class="last-update" id="lastUpdate"></p>
+  </div>
+
+  <script>
+    let modelsCache = null;
+    let cardsBuilt = false;
+
+    function fmt(n) {
+      if (typeof n !== 'number') return '0';
+      return n.toLocaleString('ru-RU');
+    }
+
+    async function fetchJSON(url) {
+      const r = await fetch(url);
+      if (!r.ok) throw new Error(`GET ${url} → ${r.status}`);
+      return await r.json();
+    }
+
+    // selected format: "provider:model" (colon-separated)
+    function isSelected(selected, provider, model) {
+      if (!selected) return false;
+      const colon = provider + ':' + model;
+      const slash = provider + '/' + model;
+      return selected === colon || selected === slash;
+    }
+
+    function getRoleIcon(role) {
+      if (role === 'Orchestrator') return { cls: 'icon-orchestrator', emoji: '🎯' };
+      if (role === 'Reviewer') return { cls: 'icon-reviewer', emoji: '🔍' };
+      return { cls: 'icon-senior', emoji: '🧠' };
+    }
+
+    function buildCards(models) {
+      const container = document.getElementById('cards');
+      container.innerHTML = '';
+      if (!models || typeof models !== 'object') return;
+
+      for (const [role, providers] of Object.entries(models)) {
+        if (!Array.isArray(providers)) continue;
+        const icon = getRoleIcon(role);
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.id = `card-${role}`;
+
+        let providerHTML = '';
+        for (const p of providers) {
+          const id = `prov-${role}-${p.provider}-${p.model}`.replace(/[^a-zA-Z0-9_-]/g, '_');
+          providerHTML += `<li id="${id}">
+            <span class="provider-name">${p.provider}/${p.model}</span>
+            <span class="active-label" style="display:none">✔ ACTIVE</span>
+          </li>`;
+        }
+
+        card.innerHTML = `
+          <div class="card-header">
+            <h2><span class="role-icon ${icon.cls}">${icon.emoji}</span> ${role}</h2>
+            <span class="badge badge-idle" id="badge-${role}">○ Idle</span>
+          </div>
+          <ul class="provider-list">${providerHTML}</ul>
+          <div class="stats">
+            <div class="stats-row">
+              <span class="stats-label">📥 Input tokens</span>
+              <span class="stats-value" id="input-${role}">0</span>
+            </div>
+            <div class="stats-row">
+              <span class="stats-label">📤 Output tokens</span>
+              <span class="stats-value" id="output-${role}">0</span>
+            </div>
+            <div class="stats-row">
+              <span class="stats-label">📊 Total tokens</span>
+              <span class="stats-value highlight" id="total-${role}">0</span>
+            </div>
+            <div class="stats-row">
+              <span class="stats-label">🔄 Requests</span>
+              <span class="stats-value" id="reqs-${role}">0</span>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      }
+    }
+
+    function updateCards(models, usage) {
+      let totalRequests = 0, totalTokens = 0, activeRoles = 0;
+      if (!models || typeof models !== 'object') return;
+
+      for (const [role, providers] of Object.entries(models)) {
+        if (!Array.isArray(providers)) continue;
+        const roleUsage = usage[role] || {};
+        const selected = roleUsage.selected || null;
+        const isProcessing = roleUsage.processing || false;
+        const u = roleUsage.usage || { prompt: 0, completion: 0, total: 0 };
+        const req = roleUsage.requests || 0;
+
+        totalRequests += req;
+        totalTokens += u.total || 0;
+        if (isProcessing) activeRoles++;
+
+        const badge = document.getElementById(`badge-${role}`);
+        if (badge) {
+          if (isProcessing) {
+            badge.className = 'badge badge-processing';
+            badge.textContent = '⏳ Processing';
+          } else if (selected) {
+            badge.className = 'badge badge-active';
+            badge.textContent = 'Active';
+          } else {
+            badge.className = 'badge badge-idle';
+            badge.textContent = '○ Idle';
+          }
+        }
+
+        for (const p of providers) {
+          const id = `prov-${role}-${p.provider}-${p.model}`.replace(/[^a-zA-Z0-9_-]/g, '_');
+          const li = document.getElementById(id);
+          if (li) {
+            const isActive = isSelected(selected, p.provider, p.model);
+            li.className = isActive ? 'active' : '';
+            const label = li.querySelector('.active-label');
+            if (label) label.style.display = isActive ? '' : 'none';
+          }
+        }
+
+        const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = fmt(val); };
+        set(`input-${role}`, u.prompt);
+        set(`output-${role}`, u.completion);
+        set(`total-${role}`, u.total);
+        set(`reqs-${role}`, req);
+      }
+
+      const overview = document.getElementById('overview');
+      overview.innerHTML = `
+        <div class="overview-item"><div class="num">${fmt(totalRequests)}</div><div class="lbl">Requests</div></div>
+        <div class="overview-item"><div class="num">${fmt(totalTokens)}</div><div class="lbl">Tokens</div></div>
+        <div class="overview-item"><div class="num">${activeRoles}</div><div class="lbl">Active Roles</div></div>
+        <div class="overview-item"><div class="num">${Object.keys(models).length}</div><div class="lbl">Roles</div></div>
+      `;
+    }
+
+    async function render() {
+      try {
+        const [models, usage] = await Promise.all([
+          fetchJSON('/api/router/models'),
+          fetchJSON('/api/router/usage'),
+        ]);
+
+        if (!cardsBuilt || JSON.stringify(models) !== JSON.stringify(modelsCache)) {
+          modelsCache = models;
+          buildCards(models);
+          cardsBuilt = true;
+        }
+
+        updateCards(models, usage);
+
+        document.getElementById('lastUpdate').textContent =
+          'Updated: ' + new Date().toLocaleTimeString('ru-RU');
+
+      } catch (e) {
+        document.getElementById('cards').innerHTML =
+          `<div class="error-msg">❌ Error: ${e.message}</div>`;
+        document.getElementById('overview').innerHTML = '';
+        console.error(e);
+      }
+    }
+
+    render();
+    setInterval(render, 10000);
+  </script>
+</body>
+</html>

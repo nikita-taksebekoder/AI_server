@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+temp-qwen/
+
+# Build artifacts
+build/
+dist/
+*.spec
+*.exe
+
+# Logs
+*.log
+logs/
+
+# Auth secrets
+**/auth-pool/
+**/auth.json
+**/.env
+**/session/
+**/tokens.json
+**/Authorization.txt
+
+# OS
+Thumbs.db
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+openrouter.txt
+_shared/openrouter.txt
+.tmp-router-guard-tests/
+gemini.txt

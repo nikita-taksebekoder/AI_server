@@ -1,0 +1,158 @@
+{
+  "port": 3270,
+  "host": "127.0.0.1",
+  "openRouterKeyFile": "C:\\Users\\Forestsnow\\workspace\\AI API\\openrouter.txt",
+  "requestTimeoutMs": 90000,
+  "virtualModels": {
+    "roo-ask-fallback": [
+      {
+        "provider": "openrouter",
+        "model": "google/gemma-4-31b-it:free"
+      },
+      {
+        "provider": "openrouter",
+        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+      },
+      {
+        "provider": "openrouter",
+        "model": "meta-llama/llama-3.3-70b-instruct:free"
+      },
+      {
+        "provider": "openrouter",
+        "model": "nousresearch/hermes-3-llama-3.1-405b:free"
+      },
+      {
+        "provider": "openrouter",
+        "model": "openai/gpt-oss-120b:free"
+      },
+      {
+        "provider": "openrouter",
+        "model": "openrouter/owl-alpha"
+      },
+      {
+        "provider": "local",
+        "model": "qwen3.7-max",
+        "baseUrl": "http://localhost:3264/v1"
+      }
+    ],
+    "roo-code-fallback": [
+      {
+        "provider": "openrouter",
+        "model": "openrouter/owl-alpha"
+      },
+      {
+        "provider": "openrouter",
+        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+      },
+      {
+        "provider": "openrouter",
+        "model": "openai/gpt-oss-120b:free"
+      },
+      {
+        "provider": "openrouter",
+        "model": "nousresearch/hermes-3-llama-3.1-405b:free"
+      },
+      {
+        "provider": "openrouter",
+        "model": "meta-llama/llama-3.3-70b-instruct:free"
+      },
+      {
+        "provider": "local",
+        "model": "qwen3.7-max",
+        "baseUrl": "http://localhost:3264/v1"
+      }
+    ],
+    "roo-architect-fallback": [
+      {
+        "provider": "openrouter",
+        "model": "nvidia/nemotron-3-super-120b-a12b:free"
+      },
+      {
+        "provider": "openrouter",
+        "model": "nvidia/nemotron-3-ultra-550b-a55b:free"
+      },
+      {
+        "provider": "openrouter",
+        "model": "openai/gpt-oss-120b:free"
+      },
+      {
+        "provider": "openrouter",
+        "model": "openrouter/owl-alpha"
+      },
+      {
+        "provider": "openrouter",
+        "model": "nousresearch/hermes-3-llama-3.1-405b:free"
+      },
+      {
+        "provider": "local",
+        "model": "qwen3.7-max",
+        "baseUrl": "http://localhost:3264/v1"
+      }
+    ],
+    "roo-orchestrator-fallback": [
+      {
+        "provider": "openrouter",
+        "model": "nvidia/nemotron-3-super-120b-a12b:free"
+      },
+      {
+        "provider": "openrouter",
+        "model": "nvidia/nemotron-3-ultra-550b-a55b:free"
+      },
+      {
+        "provider": "openrouter",
+        "model": "openai/gpt-oss-120b:free"
+      },
+      {
+        "provider": "openrouter",
+        "model": "openrouter/owl-alpha"
+      },
+      {
+        "provider": "local",
+        "model": "qwen3.7-max",
+        "baseUrl": "http://localhost:3264/v1"
+      }
+    ],
+    "roo-debug-fallback": [
+      {
+        "provider": "openrouter",
+        "model": "openai/gpt-oss-120b:free"
+      },
+      {
+        "provider": "openrouter",
+        "model": "openrouter/owl-alpha"
+      },
+      {
+        "provider": "openrouter",
+        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+      },
+      {
+        "provider": "openrouter",
+        "model": "nousresearch/hermes-3-llama-3.1-405b:free"
+      },
+      {
+        "provider": "openrouter",
+        "model": "meta-llama/llama-3.3-70b-instruct:free"
+      },
+      {
+        "provider": "local",
+        "model": "qwen3.7-max",
+        "baseUrl": "http://localhost:3264/v1"
+      }
+    ],
+    "roo-light-fallback": [
+      {
+        "provider": "openrouter",
+        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+      },
+      {
+        "provider": "openrouter",
+        "model": "cognitivecomputations/dolphin-mistral-24b-venice-edition:free"
+      },
+      {
+        "provider": "local",
+        "model": "qwen3.7-max",
+        "baseUrl": "http://localhost:3264/v1"
+      }
+    ]
+  }
+}

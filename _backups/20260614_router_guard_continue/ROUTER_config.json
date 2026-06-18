@@ -1,0 +1,43 @@
+{
+  "port": 3270,
+  "title": "AI Router 1 - Orcestrator",
+  "openRouterKeyFile": "C:\\Users\\Forestsnow\\workspace\\AI_server\\openrouter.txt",
+  "host": "127.0.0.1",
+  "requestTimeoutMs": 60000,
+  "maxFallbackAttempts": 2,
+  "maxConcurrentRequests": 1,
+  "rateLimitWindowMs": 60000,
+  "maxRequestsPerWindow": 6,
+  "rateLimitCooldownMs": 600000,
+  "authCooldownMs": 3600000,
+  "badRequestCooldownMs": 3600000,
+  "providerErrorCooldownMs": 120000,
+  "timeoutCooldownMs": 120000,
+  "emptyResponseCooldownMs": 60000,
+  "preferLastSuccessful": true,
+  "virtualModels": {
+    "Orcestrator": [
+      {
+        "provider": "openrouter",
+        "model": "openrouter/owl-alpha"
+      },
+      {
+        "provider": "openrouter",
+        "model": "nvidia/nemotron-3-super-120b-a12b:free"
+      },
+      {
+        "provider": "openrouter",
+        "model": "openai/gpt-oss-120b:free"
+      },
+      {
+        "provider": "openrouter",
+        "model": "nousresearch/hermes-3-llama-3.1-405b:free"
+      }
+    ]
+  },
+  "openRouterApiKeyEnv": "OPENROUTER_API_KEY_ROUTER1",
+  "minDelayBetweenUpstreamRequestsMs": 3000,
+  "responseCacheTtlMs": 30000,
+  "responseCacheMaxEntries": 50,
+  "fallbackOnRateLimit": false
+}

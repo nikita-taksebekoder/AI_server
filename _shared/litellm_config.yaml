@@ -1,0 +1,55 @@
+# LiteLLM Configuration
+# Routes models to LM Studio and custom local API endpoints.
+
+model_list:
+  # Hermes model served via LM Studio
+  - model_name: hermes
+    litellm_params:
+      model: openai/Hermes-3-Llama-3.1-8B-Q4_K_M
+      api_base: http://127.0.0.1:1234/v1
+      api_key: lm-studio
+
+  # Custom vision model on local endpoint
+  - model_name: my_vision
+    litellm_params:
+      model: openai/my-vision-model
+      api_base: http://localhost:8001/v1
+      api_key: placeholder-key
+
+  # Custom code model on local endpoint
+  - model_name: my_code
+    litellm_params:
+      model: openai/my-code-model
+      api_base: http://localhost:8002/v1
+      api_key: placeholder-key
+
+  # FreeDeepseekAPI - DeepSeek Web Chat proxy
+  - model_name: deepseek-chat
+    litellm_params:
+      model: openai/deepseek-chat
+      api_base: http://127.0.0.1:9655/v1
+      api_key: dummy-key
+
+  - model_name: deepseek-reasoner
+    litellm_params:
+      model: openai/deepseek-reasoner
+      api_base: http://127.0.0.1:9655/v1
+      api_key: dummy-key
+
+  - model_name: deepseek-r1
+    litellm_params:
+      model: openai/deepseek-r1
+      api_base: http://127.0.0.1:9655/v1
+      api_key: dummy-key
+
+  - model_name: deepseek-chat-search
+    litellm_params:
+      model: openai/deepseek-chat-search
+      api_base: http://127.0.0.1:9655/v1
+      api_key: dummy-key
+
+  - model_name: deepseek-reasoner-search
+    litellm_params:
+      model: openai/deepseek-reasoner-search
+      api_base: http://127.0.0.1:9655/v1
+      api_key: dummy-key
